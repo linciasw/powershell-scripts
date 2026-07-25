@@ -198,7 +198,7 @@ Do not change the spelling or capitalization of these headers.
 
 | Username | FirstName | LastName | DisplayName | Email | JobTitle | Department | startDate | endDate |
 |---|---|---|---|---|---|---|---|---|
-| jsmith | John | Smith | John Smith | jsmith@firstcitizensgroup.net | Vacation Student | Finance | 01-Jun-26 | 31-Aug-26 |
+| jsmith | John | Smith | John Smith | jsmith@firstcitizenstt.com | Vacation Student | Finance | 01-Jun-26 | 31-Aug-26 |
 
 ---
 
