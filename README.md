@@ -26,6 +26,8 @@ The script will:
 
 Before running this script, confirm the following:
 
+- Get usernames yourself by confirming it doesn't exist in Active Directory
+- Insert all required fields in CSV
 - You have permission to create users in Active Directory
 - You have access to the target Organizational Unit (OU)
 - The Active Directory PowerShell module is installed
