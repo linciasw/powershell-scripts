@@ -113,6 +113,17 @@ foreach ($User in $Users) {
 
 
 
+        # Add user to Staff_Internet group
+
+        Add-ADGroupMember `
+                -Identity "Staff_Internet" `
+                -Members $User.Username
+
+        Write-Host "Added $($User.Username) to Staff_Internet group" -ForegroundColor Green
+
+
+
+
         # Add Start/End Dates
 
         Set-ADUser $User.Username `
