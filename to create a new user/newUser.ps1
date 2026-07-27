@@ -100,7 +100,6 @@ foreach ($User in $Users) {
             -Surname $User.LastName `
             -SamAccountName $User.Username `
             -UserPrincipalName "$($User.Username)@firstcitizensgroup.net" `
-            -EmailAddress $User.Email `
             -Title $User.JobTitle `
             -Department $User.Department `
             -Description $User.Department `
