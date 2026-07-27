@@ -4,11 +4,11 @@ Import-Module ActiveDirectory
 # Configuration
 # ==========================
 
-$CSVPath = "\\pkshares\Helpdesk\Scripts\to create a new user\newUsers.csv"
+$CSVPath = "\\pkshares\Helpdesk\Scripts\newUser\newUsers.csv"
 
 $OU = "OU=Trinidad Citrix Users,DC=firstcitizens,DC=local"
 
-$LogPath = "\\pkshares\Helpdesk\Scripts\NewUsers_Log.csv"
+$LogPath = "\\pkshares\Helpdesk\Scripts\newUser\NewUsers_Log.csv"
 
 
 # ==========================
