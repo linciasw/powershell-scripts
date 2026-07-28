@@ -3,7 +3,7 @@ Import-Module ActiveDirectory
 # Path to your CSV
 $CSVPath = "\\pkshares\Helpdesk\Scripts\newUser\newUsers.csv"
 
-# Import the CSV
+# Import CSV
 $Users = Import-Csv $CSVPath
 
 function Get-NewUsername {
@@ -15,43 +15,51 @@ function Get-NewUsername {
         [string]$LastName
     )
 
-    # Remove spaces and special characters, then convert to lowercase
+    # Clean names
     $FirstName = ($FirstName -replace '[^a-zA-Z]', '').ToLower()
     $LastName  = ($LastName -replace '[^a-zA-Z]', '').ToLower()
 
-    # Option 1: First initial + Last name (jsmith)
-    $Username = $FirstName.Substring(0,1) + $LastName
+    # Store possible usernames in order
+    $UsernameOptions = @()
 
-    if (-not (Get-ADUser -Filter "SamAccountName -eq '$Username'" -ErrorAction SilentlyContinue)) {
-        return $Username
-    }
+    # Option 1: First initial + Last name
+    $UsernameOptions += $FirstName.Substring(0,1) + $LastName
 
-    # Option 2: Full first name + First initial of last name (johns)
-    $Username = $FirstName + $LastName.Substring(0,1)
+    # Option 2: Full first name
+    $UsernameOptions += $FirstName
 
-    if (-not (Get-ADUser -Filter "SamAccountName -eq '$Username'" -ErrorAction SilentlyContinue)) {
-        return $Username
-    }
+    # Option 3: Full first name + first letter of last name
+    $UsernameOptions += $FirstName + $LastName.Substring(0,1)
 
-    # Option 3: Full first name + First two letters of last name (johnsm)
+    # Option 4: Full first name + first two letters of last name
     if ($LastName.Length -ge 2) {
-        $Username = $FirstName + $LastName.Substring(0,2)
+        $UsernameOptions += $FirstName + $LastName.Substring(0,2)
     }
     else {
-        $Username = $FirstName + $LastName
+        $UsernameOptions += $FirstName + $LastName
     }
 
-    if (-not (Get-ADUser -Filter "SamAccountName -eq '$Username'" -ErrorAction SilentlyContinue)) {
-        return $Username
+
+    # Check each option
+    foreach ($Username in $UsernameOptions) {
+
+        Write-Host "Checking username: $Username"
+
+        if (-not (Get-ADUser -Filter "SamAccountName -eq '$Username'" -ErrorAction SilentlyContinue)) {
+            return $Username
+        }
     }
 
-    # Option 4: Append numbers (johnsm1, johnsm2, ...)
-    $BaseUsername = $Username
+
+    # If all options exist, add numbers
+    $BaseUsername = $UsernameOptions[-1]
     $Counter = 1
 
     while ($true) {
 
         $Username = "$BaseUsername$Counter"
+
+        Write-Host "Checking username: $Username"
 
         if (-not (Get-ADUser -Filter "SamAccountName -eq '$Username'" -ErrorAction SilentlyContinue)) {
             return $Username
@@ -61,25 +69,36 @@ function Get-NewUsername {
     }
 }
 
-# Generate usernames and update the CSV
+
+# Generate usernames
 foreach ($User in $Users) {
 
-    # Skip users that already have a username
+    # Skip existing usernames
     if (![string]::IsNullOrWhiteSpace($User.Username)) {
-        Write-Host "Skipping $($User.FirstName) $($User.LastName) - Username already exists in CSV: $($User.Username)"
+
+        Write-Host "Skipping $($User.FirstName) $($User.LastName) - Existing username: $($User.Username)"
         continue
     }
 
-    $User.Username = Get-NewUsername `
+
+    $NewUsername = Get-NewUsername `
         -FirstName $User.FirstName `
         -LastName $User.LastName
 
-    Write-Host "Generated username for $($User.FirstName) $($User.LastName): $($User.Username)"
+
+    $User.Username = $NewUsername
+
+    Write-Host "Generated username for $($User.FirstName) $($User.LastName): $NewUsername"
 }
 
-# Save the updated CSV
+
+# Export updated CSV
 $Users | Export-Csv $CSVPath -NoTypeInformation -Encoding UTF8
 
+
 Write-Host ""
+Write-Host "====================================="
 Write-Host "Username generation complete."
-Write-Host "Updated CSV saved to: $CSVPath"
+Write-Host "CSV updated:"
+Write-Host $CSVPath
+Write-Host "====================================="
