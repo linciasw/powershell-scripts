@@ -2,8 +2,8 @@
 
 - remove email address field; it will sync with exhange admin [DONE]
 - create a username generator to use first name and last name from created csv [DONE]
-- create a separate OU for created users; Trinidad Citrix Users OU for right now
-- create a script to move them out of test OU to correct OU
+- create a separate OU for created users; Trinidad Citrix Users OU for right now [HAD ONE ALREADY THERE]
+- create a script to move them out of test OU to correct OU 
 - find a way to get address attributes
 - find a way to automate creation of email inboxes
 
