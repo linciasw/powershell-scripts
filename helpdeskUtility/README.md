@@ -10,6 +10,7 @@ A PowerShell command-line menu for common Windows helpdesk tasks.
 4. Search for files by name.
 5. Retrieve a remote computer's BIOS serial number.
 6. Copy a file to the logged-on user's Desktop on selected remote computers.
+7. Launch the existing New User workflow from the Helpdesk scripts share.
 
 ## Requirements
 
@@ -28,6 +29,8 @@ A PowerShell command-line menu for common Windows helpdesk tasks.
    \`\`\`
 
 3. Choose a menu option and follow the prompts. Enter \`0\` to exit.
+
+The **Create New User** menu option launches the existing `\\pkshares\Helpdesk\Scripts\newUser\newUser.bat` workflow. It checks that the shared script is accessible and asks for confirmation before launching it; it does not replace or modify the existing user-provisioning process.
 
 Use your organisation's approved PowerShell execution policy. Do not change machine-wide policy just to run this script.
 
