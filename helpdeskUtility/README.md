@@ -11,6 +11,8 @@ A PowerShell command-line menu for common Windows helpdesk tasks.
 5. Retrieve a remote computer's BIOS serial number.
 6. Copy a file to the logged-on user's Desktop on selected remote computers.
 7. Launch the existing New User workflow from the Helpdesk scripts share.
+8. Export email group members using the existing Helpdesk PowerShell script.
+9. Export shared folder members using the existing Helpdesk PowerShell script.
 
 ## Requirements
 
@@ -30,7 +32,7 @@ A PowerShell command-line menu for common Windows helpdesk tasks.
 
 3. Choose a menu option and follow the prompts. Enter \`0\` to exit.
 
-The **Create New User** menu option launches the existing `\\pkshares\Helpdesk\Scripts\newUser\newUser.bat` workflow. It checks that the shared script is accessible and asks for confirmation before launching it; it does not replace or modify the existing user-provisioning process.
+The **Create New User** menu option launches the existing `\\pkshares\Helpdesk\Scripts\newUser\newUser.bat` workflow. The **Export Email Group Members** and **Export Shared Folder Members** options launch the existing scripts at `\\pkshares\Helpdesk\Scripts\emailGroupMembers\emailGroups.ps1` and `\\pkshares\Helpdesk\Scripts\sharedFolderMembers\sharedFolder.ps1`. Each option checks that its shared script is accessible and asks you to type `RUN` before launching it. These options reuse the existing workflows rather than replacing their logic.
 
 Use your organisation's approved PowerShell execution policy. Do not change machine-wide policy just to run this script.
 
