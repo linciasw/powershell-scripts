@@ -177,6 +177,55 @@ function Start-NewUserWorkflow {
     }
 }
 
+function Start-ExistingExportWorkflow {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$WorkflowName,
+
+        [Parameter(Mandatory)]
+        [string]$ScriptPath
+    )
+
+    if (-not (Test-Path -LiteralPath $ScriptPath -PathType Leaf)) {
+        Write-Host "The $WorkflowName script is not accessible: $ScriptPath" -ForegroundColor Red
+        Write-Host 'Check network connectivity and your access to the Helpdesk scripts share.'
+        return
+    }
+
+    Write-Host ''
+    Write-Host "This will launch the existing $WorkflowName workflow." -ForegroundColor Yellow
+    Write-Host "Script: $ScriptPath"
+    $confirmation = Read-Host 'Type RUN to launch this workflow'
+
+    if ($confirmation -cne 'RUN') {
+        Write-Host "$WorkflowName workflow cancelled."
+        return
+    }
+
+    try {
+        # Use a separate Windows PowerShell process, matching the original launcher.
+        & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $ScriptPath
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "$WorkflowName workflow exited with code $LASTEXITCODE." -ForegroundColor Yellow
+        }
+        else {
+            Write-Host "$WorkflowName workflow has finished."
+        }
+    }
+    catch {
+        Write-Host "Could not launch the $WorkflowName workflow: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+function Start-EmailGroupExport {
+    Start-ExistingExportWorkflow -WorkflowName 'Export Email Group Members' -ScriptPath '\\pkshares\Helpdesk\Scripts\emailGroupMembers\emailGroups.ps1'
+}
+
+function Start-SharedFolderExport {
+    Start-ExistingExportWorkflow -WorkflowName 'Export Shared Folder Members' -ScriptPath '\\pkshares\Helpdesk\Scripts\sharedFolderMembers\sharedFolder.ps1'
+}
+
 function Show-HelpdeskMenu {
     while ($true) {
         Clear-Host
@@ -191,6 +240,8 @@ function Show-HelpdeskMenu {
         Write-Host '  5. Get remote computer BIOS serial number'
         Write-Host '  6. Copy a file to remote computers'
         Write-Host '  7. Create New User (existing workflow)'
+        Write-Host '  8. Export Email Group Members (existing workflow)'
+        Write-Host '  9. Export Shared Folder Members (existing workflow)'
         Write-Host ''
         Write-Host '  0. Exit'
         $choice = Read-Host 'Select an option'
@@ -202,8 +253,10 @@ function Show-HelpdeskMenu {
             '5' { Get-RemoteBiosSerialNumber; Pause-ForMenu }
             '6' { Copy-FileToRemoteComputers; Pause-ForMenu }
             '7' { Start-NewUserWorkflow; Pause-ForMenu }
+            '8' { Start-EmailGroupExport; Pause-ForMenu }
+            '9' { Start-SharedFolderExport; Pause-ForMenu }
             '0' { return }
-            default { Write-Host 'Invalid selection. Choose 0 through 7.' -ForegroundColor Red; Pause-ForMenu }
+            default { Write-Host 'Invalid selection. Choose 0 through 9.' -ForegroundColor Red; Pause-ForMenu }
         }
     }
 }
