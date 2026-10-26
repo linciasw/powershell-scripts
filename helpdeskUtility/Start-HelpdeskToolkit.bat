@@ -1,13 +1,34 @@
 @echo off
-setlocal
+setlocal EnableExtensions
 title First Citizens - Helpdesk Toolkit
 color 0A
-set "PS_SCRIPT=%~dp0Start-HelpdeskUtility.ps1"
+
+rem CMD cannot use a UNC path as its working directory. PUSHd maps the share
+rem to a temporary drive so relative paths and child processes work reliably.
+pushd "%~dp0" >nul 2>&1
+if errorlevel 1 (
+    echo ERROR: Could not access the toolkit folder:
+    echo "%~dp0"
+    echo.
+    echo Check your network connection and permissions to the Helpdesk share.
+    pause
+    exit /b 1
+)
+
+set "PS_SCRIPT=%CD%\Start-HelpdeskUtility.ps1"
 
 if not exist "%PS_SCRIPT%" (
-    echo ERROR: PowerShell utility not found:
+    echo ERROR: The PowerShell utility is missing.
+    echo Expected file:
     echo "%PS_SCRIPT%"
     echo.
+    echo The batch menu and PowerShell script must both be deployed to:
+    echo   \\pkshares\Helpdesk\Scripts\helpdeskUtility
+    echo.
+    echo Copy Start-HelpdeskUtility.ps1 from the GitHub helpdeskUtility folder
+    echo into the same network folder as this batch file, then try again.
+    echo.
+    popd
     pause
     exit /b 1
 )
@@ -118,8 +139,13 @@ cls
 echo Running selected helpdesk task...
 echo.
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%PS_SCRIPT%" -Task "%TASK%"
+set "PS_EXIT=%ERRORLEVEL%"
 echo.
-echo Task finished or returned control.
+if not "%PS_EXIT%"=="0" (
+    echo PowerShell returned exit code %PS_EXIT%.
+) else (
+    echo Task finished or returned control.
+)
 pause
 if "%TASK%"=="NewUser" goto USER_MENU
 if "%TASK%"=="EmailGroups" goto USER_MENU
@@ -129,5 +155,6 @@ if "%TASK%"=="CopyFile" goto COMPUTER_MENU
 goto TROUBLESHOOT_MENU
 
 :END
+popd
 endlocal
 exit /b 0
