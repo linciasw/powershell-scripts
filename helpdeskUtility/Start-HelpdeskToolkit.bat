@@ -53,9 +53,9 @@ echo.
 set "choice="
 set /p "choice=Select a task: "
 
-if "%choice%"=="1" set "TASK=NewUser"& goto RUN_PS
-if "%choice%"=="2" set "TASK=EmailGroups"& goto RUN_PS
-if "%choice%"=="3" set "TASK=SharedFolders"& goto RUN_PS
+if "%choice%"=="1" (set "TASK=NewUser" & goto RUN_PS)
+if "%choice%"=="2" (set "TASK=EmailGroups" & goto RUN_PS)
+if "%choice%"=="3" (set "TASK=SharedFolders" & goto RUN_PS)
 if "%choice%"=="0" goto MAIN
 
 echo.
@@ -77,8 +77,8 @@ echo.
 set "choice="
 set /p "choice=Select a task: "
 
-if "%choice%"=="1" set "TASK=BiosSerial"& goto RUN_PS
-if "%choice%"=="2" set "TASK=CopyFile"& goto RUN_PS
+if "%choice%"=="1" (set "TASK=BiosSerial" & goto RUN_PS)
+if "%choice%"=="2" (set "TASK=CopyFile" & goto RUN_PS)
 if "%choice%"=="0" goto MAIN
 
 echo.
@@ -102,10 +102,10 @@ echo.
 set "choice="
 set /p "choice=Select a task: "
 
-if "%choice%"=="1" set "TASK=Permissions"& goto RUN_PS
-if "%choice%"=="2" set "TASK=FolderSizes"& goto RUN_PS
-if "%choice%"=="3" set "TASK=ProfileSizes"& goto RUN_PS
-if "%choice%"=="4" set "TASK=SearchFiles"& goto RUN_PS
+if "%choice%"=="1" (set "TASK=Permissions" & goto RUN_PS)
+if "%choice%"=="2" (set "TASK=FolderSizes" & goto RUN_PS)
+if "%choice%"=="3" (set "TASK=ProfileSizes" & goto RUN_PS)
+if "%choice%"=="4" (set "TASK=SearchFiles" & goto RUN_PS)
 if "%choice%"=="0" goto MAIN
 
 echo.
