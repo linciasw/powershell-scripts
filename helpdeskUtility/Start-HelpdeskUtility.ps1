@@ -144,6 +144,39 @@ function Copy-FileToRemoteComputers {
     $results | Format-Table -AutoSize -Wrap
 }
 
+function Start-NewUserWorkflow {
+    [CmdletBinding()]
+    param()
+
+    # Reuse the existing, centrally maintained new-user workflow.
+    $batchPath = '\\pkshares\Helpdesk\Scripts\newUser\newUser.bat'
+
+    if (-not (Test-Path -LiteralPath $batchPath -PathType Leaf)) {
+        Write-Host "The existing New User script is not accessible: $batchPath" -ForegroundColor Red
+        Write-Host 'Check network connectivity and your access to the Helpdesk scripts share.'
+        return
+    }
+
+    Write-Host ''
+    Write-Host 'This will launch the existing New User workflow.' -ForegroundColor Yellow
+    Write-Host "Script: $batchPath"
+    $confirmation = Read-Host 'Type RUN to launch the New User workflow'
+
+    if ($confirmation -cne 'RUN') {
+        Write-Host 'New User workflow cancelled.'
+        return
+    }
+
+    try {
+        # Run the existing batch file in this console so its prompts remain visible.
+        & $batchPath
+        Write-Host 'The New User workflow has returned control to the utility.'
+    }
+    catch {
+        Write-Host "Could not launch the New User workflow: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
 function Show-HelpdeskMenu {
     while ($true) {
         Clear-Host
@@ -157,6 +190,7 @@ function Show-HelpdeskMenu {
         Write-Host '  4. Search for files by name'
         Write-Host '  5. Get remote computer BIOS serial number'
         Write-Host '  6. Copy a file to remote computers'
+        Write-Host '  7. Create New User (existing workflow)'
         Write-Host ''
         Write-Host '  0. Exit'
         $choice = Read-Host 'Select an option'
@@ -167,8 +201,9 @@ function Show-HelpdeskMenu {
             '4' { Search-FilesByName; Pause-ForMenu }
             '5' { Get-RemoteBiosSerialNumber; Pause-ForMenu }
             '6' { Copy-FileToRemoteComputers; Pause-ForMenu }
+            '7' { Start-NewUserWorkflow; Pause-ForMenu }
             '0' { return }
-            default { Write-Host 'Invalid selection. Choose 0 through 6.' -ForegroundColor Red; Pause-ForMenu }
+            default { Write-Host 'Invalid selection. Choose 0 through 7.' -ForegroundColor Red; Pause-ForMenu }
         }
     }
 }
