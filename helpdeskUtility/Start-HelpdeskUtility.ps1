@@ -4,6 +4,10 @@
 .NOTES
     Use only on systems and resources you are authorised to administer.
 #>
+param(
+    [ValidateSet('Permissions', 'FolderSizes', 'ProfileSizes', 'SearchFiles', 'BiosSerial', 'CopyFile', 'NewUser', 'EmailGroups', 'SharedFolders')]
+    [string]$Task
+)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Continue'
 
@@ -169,7 +173,7 @@ function Start-NewUserWorkflow {
 
     try {
         # Run the existing batch file in this console so its prompts remain visible.
-        & $batchPath
+        & $env:ComSpec /d /c $batchPath
         Write-Host 'The New User workflow has returned control to the utility.'
     }
     catch {
@@ -261,4 +265,20 @@ function Show-HelpdeskMenu {
     }
 }
 
-Show-HelpdeskMenu
+
+if ($PSBoundParameters.ContainsKey('Task')) {
+    switch ($Task) {
+        'Permissions'  { Show-FolderPermissions }
+        'FolderSizes'  { Get-FolderSizeReport }
+        'ProfileSizes' { Get-UserProfileSizeReport }
+        'SearchFiles'  { Search-FilesByName }
+        'BiosSerial'   { Get-RemoteBiosSerialNumber }
+        'CopyFile'     { Copy-FileToRemoteComputers }
+        'NewUser'      { Start-NewUserWorkflow }
+        'EmailGroups'  { Start-EmailGroupExport }
+        'SharedFolders'{ Start-SharedFolderExport }
+    }
+}
+else {
+    Show-HelpdeskMenu
+}
