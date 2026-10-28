@@ -1,7 +1,7 @@
 Import-Module ActiveDirectory
 
 # Path to your CSV
-$CSVPath = ".\newUsers.csv"
+$CSVPath = "\\pkshares\Helpdesk\Scripts\newUser\newUsers.csv"
 
 # Import the CSV
 $Users = Import-Csv $CSVPath
